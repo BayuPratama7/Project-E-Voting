@@ -1,0 +1,15 @@
+{
+    "description": "The CodeIgniter REST Server",
+    "name": "chriskacerguis/codeigniter-restserver",
+    "type": "library",
+    "license": "MIT",
+    "homepage": "https://github.com/chriskacerguis/codeigniter-restserver",
+    "require": {
+        "php": ">=5.4.0",
+        "chriskacerguis/codeigniter-restserver": "^3.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.*",
+        "mikey179/vfsstream": "v1.6.*"
+    }
+}

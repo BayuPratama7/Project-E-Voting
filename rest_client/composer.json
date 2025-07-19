@@ -1,0 +1,6 @@
+{
+    "description": "CodeIgniter REST Client",
+    "require": {
+        "guzzlehttp/guzzle": "^7.9"
+    }
+}

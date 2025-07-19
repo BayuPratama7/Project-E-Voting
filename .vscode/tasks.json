@@ -1,0 +1,12 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Start XAMPP Server",
+			"type": "shell",
+			"command": "echo 'Pastikan XAMPP sudah berjalan dan akses: http://localhost/y/rest_client/index.php/auth_pemilih/register'",
+			"group": "build",
+			"isBackground": false
+		}
+	]
+}

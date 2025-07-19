@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Pemilihan</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Selamat Datang, <span id="username"></span>!</h1>
+        <p>Silakan pilih calon ketua Anda.</p>
+        
+        <div id="candidates-container">
+            <!-- Daftar kandidat akan dimuat di sini oleh JavaScript -->
+            <p>Memuat kandidat...</p>
+        </div>
+
+        <hr>
+
+        <div id="vote-section" style="display: none;">
+            <h2>Anda memilih: <span id="selected-candidate-name"></span></h2>
+            <button id="confirm-vote-btn">Konfirmasi Pilihan</button>
+        </div>
+
+        <div id="thank-you-message" style="display: none;">
+            <h2>Terima kasih telah memberikan suara!</h2>
+            <p>Anda akan dialihkan ke halaman login.</p>
+        </div>
+    </div>
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>
