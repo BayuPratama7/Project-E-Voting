@@ -449,7 +449,7 @@
                 🚀 Dashboard Admin Premium
             </a>
             <div class="d-flex">
-                <a href="<?php echo site_url('auth/logout'); ?>" class="btn btn-logout">
+                <a href="<?php echo site_url('admin_auth/logout'); ?>" class="btn btn-logout">
                     <i class="fas fa-sign-out-alt me-1"></i>
                     Logout
                 </a>

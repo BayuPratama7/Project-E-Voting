@@ -28,7 +28,7 @@
         <h2>Pemilihan Ketua HIMSI</h2>
         <div class="welcome">
             Selamat Datang, <strong><?php echo $this->session->userdata('nama'); ?></strong>!
-            <a href="<?php echo site_url('auth/logout'); ?>" class="btn-logout">Logout</a>
+            <a href="<?php echo site_url('admin_auth/logout'); ?>" class="btn-logout">Logout</a>
         </div>
     </div>
     <h1>Daftar Calon</h1>

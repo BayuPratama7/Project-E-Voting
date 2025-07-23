@@ -33,7 +33,7 @@
             </div>
         <?php endif; ?>
 
-        <?php echo form_open('auth/login_process'); ?>
+        <?php echo form_open('admin_auth/login_process'); ?>
             <input type="text" name="nim" placeholder="NIM" required>
             <input type="password" name="password" placeholder="Password" required>
             <input type="submit" name="submit" value="Login">

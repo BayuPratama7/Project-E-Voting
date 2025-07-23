@@ -14,10 +14,10 @@ $query_builder = TRUE;
 
 $db['default'] = array(
     'dsn'	=> '',
-    'hostname' => 'sql302.infinityfree.com',
-    'username' => 'if0_39534816',
-    'password' => 'votinghimsi',
-    'database' => 'if0_39534816_voting_db',
+    'hostname' => 'sql202.infinityfree.com',  // Ganti dengan hostname database InfinityFree
+    'username' => 'if0_39534816_evoting',      // Ganti dengan username database
+    'password' => 'password_database_anda',    // Ganti dengan password database
+    'database' => 'if0_39534816_evoting',      // Ganti dengan nama database
     'dbdriver' => 'mysqli',
     'dbprefix' => '',
     'pconnect' => FALSE,
@@ -40,7 +40,7 @@ $db['development'] = array(
     'hostname' => 'localhost',
     'username' => 'root',
     'password' => '',
-    'database' => 'if0_39534816_voting_db',
+    'database' => 'evoting_db',
     'dbdriver' => 'mysqli',
     'dbprefix' => '',
     'pconnect' => FALSE,
@@ -59,9 +59,8 @@ $db['development'] = array(
 
 // Auto-detect environment dan set active group
 if (isset($_SERVER['HTTP_HOST'])) {
-    if (strpos($_SERVER['HTTP_HOST'], 'infinityfree') !== false || 
-        strpos($_SERVER['HTTP_HOST'], 'epizy.com') !== false ||
-        $_SERVER['HTTP_HOST'] === 'votinghimsi.infinityfreeapp.com') {
+    if (strpos($_SERVER['HTTP_HOST'], 'infinityfree.com') !== false || 
+        strpos($_SERVER['HTTP_HOST'], 'epizy.com') !== false) {
         $active_group = 'default';  // InfinityFree
     } else {
         $active_group = 'development';  // Localhost

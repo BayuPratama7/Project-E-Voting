@@ -58,7 +58,7 @@ $autoload['packages'] = array();
 |
 |	$autoload['libraries'] = array('user_agent' => 'ua');
 */
-$autoload['libraries'] = array('session', 'curl');
+$autoload['libraries'] = array('session', 'curl', 'database');
 
 /*
 | -------------------------------------------------------------------
@@ -89,7 +89,7 @@ $autoload['drivers'] = array();
 |
 |	$autoload['helper'] = array('url', 'file');
 */
-$autoload['helper'] = array('url', 'form', 'html');
+$autoload['helper'] = array('url', 'form', 'html', 'api');
 
 /*
 | -------------------------------------------------------------------
@@ -132,5 +132,5 @@ $autoload['language'] = array();
 |
 |	$autoload['model'] = array('first_model' => 'first');
 */
-$autoload['model'] = array();
+$autoload['model'] = array('Pemilih_model', 'Calon_model');
 $config['composer_autoload'] = 'C:/xampp/htdocs/y/rest_client/vendor/autoload.php';

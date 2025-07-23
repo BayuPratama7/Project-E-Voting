@@ -52,13 +52,52 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $route['default_controller'] = 'welcome';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
-$route['dashboard'] = 'dashboard/dashboard';
-$route['login'] = 'auth/login';
-$route['logout'] = 'auth/logout';
 
-// Routes untuk pemilih
-$route['pemilih/login'] = 'auth_pemilih/login';
-$route['pemilih/dashboard'] = 'dashboard_pemilih/dashboard';
+// Routes untuk halaman utama
+$route['login'] = 'admin_auth/login';
+$route['logout'] = 'admin_auth/logout';
+$route['auth/logout'] = 'admin_auth/logout';
+$route['auth/login'] = 'admin_auth/login';
+
+// Routes untuk admin
+$route['admin'] = 'admin/dashboard';
+$route['admin/dashboard'] = 'admin/dashboard';
+$route['admin/hasil'] = 'hasil_pemilihan/hasil';
+$route['admin/calon'] = 'calon/index';
+$route['admin/pemilih'] = 'pemilih/index';
+$route['admin/logout'] = 'admin/logout';
+$route['admin/kembali'] = 'admin/kembali';
+
+// Routes untuk CRUD Calon
+$route['calon'] = 'calon/index';
+$route['calon/tambah'] = 'calon/tambah';
+$route['calon/edit/(:num)'] = 'calon/edit/$1';
+$route['calon/hapus/(:num)'] = 'calon/hapus/$1';
+$route['calon/kembali'] = 'calon/kembali';
+
+// Routes untuk CRUD Pemilih  
+$route['pemilih'] = 'pemilih/index';
+$route['pemilih/tambah'] = 'pemilih/tambah';
+$route['pemilih/edit/(:num)'] = 'pemilih/edit/$1';
+$route['pemilih/hapus/(:num)'] = 'pemilih/hapus/$1';
+$route['pemilih/kembali'] = 'pemilih/kembali';
+
+// Routes untuk Hasil Pemilihan
+$route['hasil'] = 'hasil_pemilihan/hasil';
+$route['hasil/reset'] = 'hasil_pemilihan/reset_voting';
+$route['hasil/export'] = 'hasil_pemilihan/export_excel';
+$route['hasil/refresh'] = 'hasil_pemilihan/refresh_data';
+$route['hasil/kembali'] = 'hasil_pemilihan/kembali';
+
+// Routes untuk pemilih - SESUAI URL DI SCREENSHOT
+$route['auth_pemilih/login'] = 'auth_pemilih/login';
+$route['auth_pemilih/aksi_login'] = 'auth_pemilih/aksi_login';
+$route['auth_pemilih/register'] = 'auth_pemilih/register';
+$route['auth_pemilih/aksi_register'] = 'auth_pemilih/aksi_register';
+$route['auth_pemilih/logout'] = 'auth_pemilih/logout';
+
+// Routes dashboard
+$route['dashboard_pemilih/dashboard'] = 'dashboard_pemilih/dashboard';
 $route['vote'] = 'dashboard_pemilih/vote';
 
 // Routes untuk hasil pemilihan

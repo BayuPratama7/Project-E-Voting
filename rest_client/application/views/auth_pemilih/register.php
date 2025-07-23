@@ -196,7 +196,7 @@
         </div>
         
         <div class="footer-links">
-            <a href="<?= site_url('auth/login'); ?>">Login sebagai Admin</a>
+            <a href="<?= site_url('admin_auth/login'); ?>">Login sebagai Admin</a>
         </div>
         
         <div class="footer-note">

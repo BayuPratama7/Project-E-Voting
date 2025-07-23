@@ -3,46 +3,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 /*
 |--------------------------------------------------------------------------
-| Base Site URL fo/*
-|--------------------------------------------------------------------------
-| Cookie Related Variables
-|--------------------------------------------------------------------------
-*/
-$config['cookie_prefix']	= 'evoting_server_';
-$config['cookie_domain']	= '';
-$config['cookie_path']		= '/';
-// Auto-detect HTTPS untuk production
-if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
-    $config['cookie_secure'] = TRUE;
-} else {
-    $config['cookie_secure'] = FALSE;
-}
-$config['cookie_httponly'] 	= TRUE;
-
-/*
-|--------------------------------------------------------------------------
 | Base Site URL for InfinityFree
 |--------------------------------------------------------------------------
 */
-// Auto-detect environment untuk base URL
-if (isset($_SERVER['HTTP_HOST'])) {
-    if (strpos($_SERVER['HTTP_HOST'], 'infinityfree') !== false || 
-        strpos($_SERVER['HTTP_HOST'], 'epizy.com') !== false ||
-        strpos($_SERVER['HTTP_HOST'], '.rf.gd') !== false ||
-        $_SERVER['HTTP_HOST'] === 'votinghimsi.infinityfreeapp.com') {
-        // InfinityFree hosting - domain spesifik
-        if ($_SERVER['HTTP_HOST'] === 'votinghimsi.infinityfreeapp.com') {
-            $config['base_url'] = 'https://votinghimsi.infinityfreeapp.com/rest_server/';
-        } else {
-            $config['base_url'] = 'https://' . $_SERVER['HTTP_HOST'] . '/rest_server/';
-        }
-    } else {
-        // Localhost development
-        $config['base_url'] = 'http://localhost:8001/';
-    }
-} else {
-    $config['base_url'] = 'http://localhost:8001/';
-}
+$config['base_url'] = 'https://your-subdomain.infinityfree.com/rest_server/';
 
 /*
 |--------------------------------------------------------------------------
@@ -202,12 +166,7 @@ $config['sess_regenerate_destroy'] = FALSE;
 $config['cookie_prefix']	= 'evoting_api_';
 $config['cookie_domain']	= '';
 $config['cookie_path']		= '/';
-// Auto-detect HTTPS untuk production
-if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
-    $config['cookie_secure'] = TRUE;
-} else {
-    $config['cookie_secure'] = FALSE;
-}
+$config['cookie_secure']	= FALSE;
 $config['cookie_httponly'] 	= TRUE;
 
 /*

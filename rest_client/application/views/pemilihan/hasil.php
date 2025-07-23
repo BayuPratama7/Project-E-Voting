@@ -340,7 +340,7 @@
                 </ul>
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= site_url('auth/logout') ?>">
+                        <a class="nav-link" href="<?= site_url('admin_auth/logout') ?>">
                             <i class="fas fa-sign-out-alt me-1"></i>Logout
                         </a>
                     </li>

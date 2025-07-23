@@ -112,7 +112,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 Login sebagai Pemilih
             </a>
             
-            <a href="<?= site_url('auth/login'); ?>" class="login-btn btn-admin">
+            <a href="<?= site_url('admin_auth/login'); ?>" class="login-btn btn-admin">
                 <span class="icon">⚙️</span>
                 Login sebagai Admin
             </a>

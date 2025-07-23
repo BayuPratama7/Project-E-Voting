@@ -7,8 +7,6 @@ class Pemilih extends CI_Controller {
         parent::__construct();
         $this->load->helper(array('url', 'html'));
         $this->load->library('session');
-        $this->load->database();
-        $this->load->model('Pemilih_model');
         
         // Cek session admin
         $is_admin_logged_in = (
@@ -28,8 +26,8 @@ class Pemilih extends CI_Controller {
     public function index() {
         header('Content-Type: text/html; charset=utf-8');
         
-        // Ambil data pemilih dari database
-        $data_pemilih = $this->Pemilih_model->get_all_pemilih();
+        // Ambil data pemilih dari API
+        $data_pemilih = $this->get_data_pemilih();
         
         echo "<!DOCTYPE html>";
         echo "<html lang='id'>";
@@ -149,6 +147,7 @@ class Pemilih extends CI_Controller {
             echo "<th>No</th>";
             echo "<th>Nama</th>";
             echo "<th>NIM</th>";
+            echo "<th>Jurusan</th>";
             echo "<th>Status Vote</th>";
             echo "<th>Waktu Vote</th>";
             echo "<th>Aksi</th>";
@@ -161,6 +160,7 @@ class Pemilih extends CI_Controller {
                 echo "<td>" . ($index + 1) . "</td>";
                 echo "<td><i class='fas fa-user me-2'></i>" . (isset($pemilih['nama']) ? htmlspecialchars($pemilih['nama']) : 'Nama tidak tersedia') . "</td>";
                 echo "<td>" . (isset($pemilih['nim']) ? htmlspecialchars($pemilih['nim']) : 'NIM tidak tersedia') . "</td>";
+                echo "<td>" . (isset($pemilih['jurusan']) ? htmlspecialchars($pemilih['jurusan']) : 'Jurusan tidak tersedia') . "</td>";
                 echo "<td>";
                 if (isset($pemilih['status_vote']) && $pemilih['status_vote'] == 1) {
                     echo "<span class='status-badge status-sudah'><i class='fas fa-check me-1'></i>Sudah Memilih</span>";
@@ -216,7 +216,27 @@ class Pemilih extends CI_Controller {
     // Method untuk mengambil data pemilih dari API
     private function get_data_pemilih()
     {
-        return $this->Pemilih_model->get_all_pemilih();
+        $api_url = 'http://localhost:8001/index.php/api/pemilih';
+        
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $api_url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json'
+        ));
+        
+        $response = curl_exec($ch);
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($http_code == 200 && !empty($response)) {
+            $data = json_decode($response, true);
+            if (isset($data['data']) && is_array($data['data'])) {
+                return $data['data'];
+            }
+        }
+        return array();
     }
 
     public function tambah() {
@@ -224,37 +244,38 @@ class Pemilih extends CI_Controller {
             // Proses form submission
             $nama = $this->input->post('nama');
             $nim = $this->input->post('nim');
+            $jurusan = $this->input->post('jurusan');
             $password = $this->input->post('password');
             
-            // Validasi input
-            if (empty($nama) || empty($nim) || empty($password)) {
-                $this->session->set_flashdata('error', 'Semua field harus diisi!');
-                $this->show_form_tambah();
-                return;
-            }
-            
-            // Cek apakah NIM sudah ada
-            if ($this->Pemilih_model->get_pemilih_by_nim($nim)) {
-                $this->session->set_flashdata('error', 'NIM sudah terdaftar!');
-                $this->show_form_tambah();
-                return;
-            }
-            
-            // Siapkan data untuk database
-            $data = array(
+            // Kirim ke API
+            $api_url = 'http://localhost:8001/index.php/api/pemilih/create';
+            $post_data = array(
                 'nama' => $nama,
                 'nim' => $nim,
-                'password' => password_hash($password, PASSWORD_DEFAULT),
-                'status_memilih' => 0,
-                'created_at' => date('Y-m-d H:i:s')
+                'jurusan' => $jurusan,
+                'password' => $password
             );
             
-            // Insert ke database
-            if ($this->Pemilih_model->insert_pemilih($data)) {
-                $this->session->set_flashdata('success', 'Pemilih berhasil ditambahkan!');
-                redirect('pemilih');
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $api_url);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post_data));
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+            
+            $response = curl_exec($ch);
+            curl_close($ch);
+            
+            if ($response) {
+                $result = json_decode($response, true);
+                if (isset($result['status']) && $result['status'] === true) {
+                    $this->session->set_flashdata('success', 'Pemilih berhasil ditambahkan!');
+                    redirect('pemilih');
+                } else {
+                    $this->session->set_flashdata('error', 'Gagal menambahkan pemilih: ' . (isset($result['message']) ? $result['message'] : 'Unknown error'));
+                }
             } else {
-                $this->session->set_flashdata('error', 'Gagal menambahkan pemilih!');
+                $this->session->set_flashdata('error', 'Tidak dapat terhubung ke server API!');
             }
         }
         
@@ -267,65 +288,77 @@ class Pemilih extends CI_Controller {
             // Proses form submission
             $nama = $this->input->post('nama');
             $nim = $this->input->post('nim');
+            $jurusan = $this->input->post('jurusan');
             $password = $this->input->post('password');
             
-            // Validasi input
-            if (empty($nama) || empty($nim)) {
-                $this->session->set_flashdata('error', 'Nama dan NIM harus diisi!');
-                $pemilih_data = $this->Pemilih_model->get_pemilih_by_id($id);
-                $this->show_form_edit($id, $pemilih_data);
-                return;
-            }
-            
-            // Cek apakah NIM sudah digunakan pemilih lain
-            $existing_pemilih = $this->Pemilih_model->get_pemilih_by_nim($nim);
-            if ($existing_pemilih && $existing_pemilih['id_pemilih'] != $id) {
-                $this->session->set_flashdata('error', 'NIM sudah digunakan pemilih lain!');
-                $pemilih_data = $this->Pemilih_model->get_pemilih_by_id($id);
-                $this->show_form_edit($id, $pemilih_data);
-                return;
-            }
-            
-            // Siapkan data untuk update
-            $data = array(
+            // Kirim ke API
+            $api_url = 'http://localhost:8001/index.php/api/pemilih/update/' . $id;
+            $post_data = array(
                 'nama' => $nama,
-                'nim' => $nim
+                'nim' => $nim,
+                'jurusan' => $jurusan
             );
             
             if (!empty($password)) {
-                $data['password'] = password_hash($password, PASSWORD_DEFAULT);
+                $post_data['password'] = $password;
             }
             
-            // Update database
-            if ($this->Pemilih_model->update_pemilih($id, $data)) {
-                $this->session->set_flashdata('success', 'Pemilih berhasil diupdate!');
-                redirect('pemilih');
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $api_url);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post_data));
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+            
+            $response = curl_exec($ch);
+            curl_close($ch);
+            
+            if ($response) {
+                $result = json_decode($response, true);
+                if (isset($result['status']) && $result['status'] === true) {
+                    $this->session->set_flashdata('success', 'Pemilih berhasil diupdate!');
+                    redirect('pemilih');
+                } else {
+                    $this->session->set_flashdata('error', 'Gagal mengupdate pemilih: ' . (isset($result['message']) ? $result['message'] : 'Unknown error'));
+                }
             } else {
-                $this->session->set_flashdata('error', 'Gagal mengupdate pemilih!');
+                $this->session->set_flashdata('error', 'Tidak dapat terhubung ke server API!');
             }
         } else {
             // Ambil data pemilih untuk edit
-            $pemilih_data = $this->Pemilih_model->get_pemilih_by_id($id);
+            $pemilih_data = $this->get_pemilih_by_id($id);
             $this->show_form_edit($id, $pemilih_data);
         }
     }
 
     public function hapus($id) {
-        // Hapus dari database
-        if ($this->Pemilih_model->delete_pemilih($id)) {
-            $this->session->set_flashdata('success', 'Pemilih berhasil dihapus!');
+        // Kirim ke API
+        $api_url = 'http://localhost:8001/index.php/api/pemilih/delete/' . $id;
+        
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $api_url);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        
+        $response = curl_exec($ch);
+        curl_close($ch);
+        
+        if ($response) {
+            $result = json_decode($response, true);
+            if (isset($result['status']) && $result['status'] === true) {
+                $this->session->set_flashdata('success', 'Pemilih berhasil dihapus!');
+            } else {
+                $this->session->set_flashdata('error', 'Gagal menghapus pemilih: ' . (isset($result['message']) ? $result['message'] : 'Unknown error'));
+            }
         } else {
-            $this->session->set_flashdata('error', 'Gagal menghapus pemilih!');
+            $this->session->set_flashdata('error', 'Tidak dapat terhubung ke server API!');
         }
         
         redirect('pemilih');
     }
 
     private function show_form_tambah() {
-        // Enable error display for debugging
-        ini_set('display_errors', 1);
-        error_reporting(E_ALL);
-        
         header('Content-Type: text/html; charset=utf-8');
         
         echo "<!DOCTYPE html>";
@@ -372,6 +405,11 @@ class Pemilih extends CI_Controller {
         echo "</div>";
         
         echo "<div class='mb-3'>";
+        echo "<label class='form-label'><i class='fas fa-graduation-cap me-2'></i>Jurusan</label>";
+        echo "<input type='text' class='form-control' name='jurusan' placeholder='Masukkan jurusan' required>";
+        echo "</div>";
+        
+        echo "<div class='mb-3'>";
         echo "<label class='form-label'><i class='fas fa-lock me-2'></i>Password</label>";
         echo "<input type='password' class='form-control' name='password' placeholder='Masukkan password' required>";
         echo "</div>";
@@ -389,22 +427,7 @@ class Pemilih extends CI_Controller {
     }
 
     private function show_form_edit($id, $pemilih_data) {
-        // Enable error display for debugging
-        ini_set('display_errors', 1);
-        error_reporting(E_ALL);
-        
         header('Content-Type: text/html; charset=utf-8');
-        
-        // Check if pemilih_data is empty
-        if (empty($pemilih_data)) {
-            echo "<!DOCTYPE html>";
-            echo "<html><head><title>Error</title></head><body>";
-            echo "<h1>Error: Data pemilih tidak ditemukan!</h1>";
-            echo "<p>ID: " . htmlspecialchars($id) . "</p>";
-            echo "<a href='" . site_url('pemilih') . "'>Kembali ke Daftar</a>";
-            echo "</body></html>";
-            return;
-        }
         
         echo "<!DOCTYPE html>";
         echo "<html lang='id'>";
@@ -440,6 +463,7 @@ class Pemilih extends CI_Controller {
         
         $nama = isset($pemilih_data['nama']) ? $pemilih_data['nama'] : '';
         $nim = isset($pemilih_data['nim']) ? $pemilih_data['nim'] : '';
+        $jurusan = isset($pemilih_data['jurusan']) ? $pemilih_data['jurusan'] : '';
         
         echo "<form method='post'>";
         echo "<div class='mb-3'>";
@@ -450,6 +474,11 @@ class Pemilih extends CI_Controller {
         echo "<div class='mb-3'>";
         echo "<label class='form-label'><i class='fas fa-id-card me-2'></i>NIM</label>";
         echo "<input type='text' class='form-control' name='nim' value='" . htmlspecialchars($nim) . "' placeholder='Masukkan NIM' required>";
+        echo "</div>";
+        
+        echo "<div class='mb-3'>";
+        echo "<label class='form-label'><i class='fas fa-graduation-cap me-2'></i>Jurusan</label>";
+        echo "<input type='text' class='form-control' name='jurusan' value='" . htmlspecialchars($jurusan) . "' placeholder='Masukkan jurusan' required>";
         echo "</div>";
         
         echo "<div class='mb-3'>";
@@ -470,6 +499,23 @@ class Pemilih extends CI_Controller {
     }
 
     private function get_pemilih_by_id($id) {
-        return $this->Pemilih_model->get_pemilih_by_id($id);
+        $api_url = 'http://localhost:8001/index.php/api/pemilih/read/' . $id;
+        
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $api_url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        
+        $response = curl_exec($ch);
+        curl_close($ch);
+        
+        if ($response) {
+            $result = json_decode($response, true);
+            if (isset($result['status']) && $result['status'] === true && isset($result['data'])) {
+                return $result['data'];
+            }
+        }
+        
+        return array();
     }
 }

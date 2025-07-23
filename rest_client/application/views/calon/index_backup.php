@@ -47,7 +47,7 @@
         <a href="<?= site_url('/') ?>">Halaman Utama</a>
         <a href="<?= site_url('dashboard/dashboard') ?>">Dashboard</a>
         <a href="<?= site_url('pemilih') ?>">Data Pemilih</a>
-        <a href="<?= site_url('auth/logout') ?>">Logout</a>
+        <a href="<?= site_url('admin_auth/logout') ?>">Logout</a>
     </div>
 </div>
 

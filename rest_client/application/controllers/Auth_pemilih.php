@@ -1,16 +1,14 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\ConnectException;
-
 class Auth_pemilih extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
         $this->load->helper(array('form', 'url', 'html'));
         $this->load->library('session');
+        $this->load->database();
+        $this->load->model('Pemilih_model');
     }
 
     public function index()
@@ -46,77 +44,46 @@ class Auth_pemilih extends CI_Controller {
 
     public function aksi_login()
     {
-        $nim = $this->input->post('nim', true);
-        $password = $this->input->post('password', true);
+        // Validasi input dasar
+        $nim = $this->input->post('nim');
+        $password = $this->input->post('password');
 
-        // Validasi input
         if (empty($nim) || empty($password)) {
             $this->session->set_flashdata('error', 'NIM dan password harus diisi!');
             redirect('auth_pemilih/login');
             return;
         }
 
-        try {
-            // Panggil API login pemilih
-            $client = new Client([
-                'base_uri' => 'http://localhost/y/rest_server/api/',
-                'timeout'  => 5.0
-            ]);
+        // Cari pemilih berdasarkan NIM
+        $pemilih_data = $this->Pemilih_model->get_pemilih_by_nim($nim);
+        
+        if ($pemilih_data && password_verify($password, $pemilih_data['password'])) {
+            // Login berhasil
+            $session_data = array(
+                'pemilih_id' => $pemilih_data['id_pemilih'],
+                'pemilih_nim' => $pemilih_data['nim'],
+                'pemilih_nama' => $pemilih_data['nama'],
+                'pemilih_status_memilih' => $pemilih_data['status_memilih'],
+                'pemilih_status' => 'login'
+            );
 
-            $response = $client->request('POST', 'auth/login', [
-                'form_params' => [
-                    'nim' => $nim,
-                    'password' => $password
-                ]
-            ]);
+            $this->session->set_userdata($session_data);
+            $this->session->set_flashdata('success', 'Login berhasil! Selamat datang ' . $pemilih_data['nama']);
 
-            $result = json_decode($response->getBody()->getContents(), true);
-
-            if (isset($result['status']) && $result['status'] === true) {
-                // Login berhasil, buat session pemilih
-                $pemilih_data = $result['data'];
-                
-                $session_data = array(
-                    'pemilih_id' => $pemilih_data['id_pemilih'],
-                    'pemilih_nim' => $pemilih_data['nim'],
-                    'pemilih_nama' => $pemilih_data['nama'],
-                    'pemilih_status_memilih' => $pemilih_data['status_memilih'],
-                    'pemilih_status' => 'login'
-                );
-
-                $this->session->set_userdata($session_data);
-                $this->session->set_flashdata('success', 'Login berhasil! Selamat datang ' . $pemilih_data['nama']);
-
-                // Redirect ke dashboard pemilih
-                redirect('dashboard_pemilih');
-            } else {
-                // Login gagal
-                $error_msg = isset($result['message']) ? $result['message'] : 'Login gagal. Periksa NIM dan password Anda.';
-                $this->session->set_flashdata('error', $error_msg);
-                redirect('auth_pemilih/login');
-            }
-
-        } catch (ClientException $e) {
-            $response = $e->getResponse();
-            $result = json_decode($response->getBody()->getContents(), true);
-            $error_msg = isset($result['message']) ? $result['message'] : 'Login gagal. Periksa NIM dan password Anda.';
-            $this->session->set_flashdata('error', $error_msg);
-            redirect('auth_pemilih/login');
-        } catch (ConnectException $e) {
-            $this->session->set_flashdata('error', 'Tidak dapat terhubung ke server. Silakan coba lagi.');
-            redirect('auth_pemilih/login');
-        } catch (Exception $e) {
-            $this->session->set_flashdata('error', 'Terjadi kesalahan sistem. Silakan coba lagi.');
+            redirect('dashboard_pemilih/dashboard');
+        } else {
+            // Login gagal
+            $this->session->set_flashdata('error', 'Login gagal. Periksa NIM dan password Anda.');
             redirect('auth_pemilih/login');
         }
     }
 
     public function aksi_register()
     {
-        $nim = $this->input->post('nim', true);
-        $nama = $this->input->post('nama', true);
-        $password = $this->input->post('password', true);
-        $confirm_password = $this->input->post('confirm_password', true);
+        $nim = $this->input->post('nim');
+        $nama = $this->input->post('nama');
+        $password = $this->input->post('password');
+        $confirm_password = $this->input->post('confirm_password');
 
         // Validasi input
         if (empty($nim) || empty($nama) || empty($password) || empty($confirm_password)) {
@@ -132,46 +99,36 @@ class Auth_pemilih extends CI_Controller {
             return;
         }
 
-        try {
-            // Panggil API register pemilih
-            $client = new Client([
-                'base_uri' => 'http://localhost/y/rest_server/api/',
-                'timeout'  => 5.0
-            ]);
-
-            $response = $client->request('POST', 'auth/register', [
-                'form_params' => [
-                    'nim' => $nim,
-                    'nama' => $nama,
-                    'password' => $password,
-                    'confirm_password' => $confirm_password
-                ]
-            ]);
-
-            $result = json_decode($response->getBody()->getContents(), true);
-
-            if (isset($result['status']) && $result['status'] === true) {
-                // Registrasi berhasil
-                $this->session->set_flashdata('success', $result['message']);
-                redirect('auth_pemilih/login');
-            } else {
-                // Registrasi gagal
-                $error_msg = isset($result['message']) ? $result['message'] : 'Registrasi gagal. Silakan coba lagi.';
-                $this->session->set_flashdata('error', $error_msg);
-                redirect('auth_pemilih/register');
-            }
-
-        } catch (ClientException $e) {
-            $response = $e->getResponse();
-            $result = json_decode($response->getBody()->getContents(), true);
-            $error_msg = isset($result['message']) ? $result['message'] : 'Registrasi gagal. Silakan coba lagi.';
-            $this->session->set_flashdata('error', $error_msg);
+        // Validasi panjang password
+        if (strlen($password) < 6) {
+            $this->session->set_flashdata('error', 'Password minimal 6 karakter!');
             redirect('auth_pemilih/register');
-        } catch (ConnectException $e) {
-            $this->session->set_flashdata('error', 'Tidak dapat terhubung ke server. Silakan coba lagi.');
+            return;
+        }
+
+        // Cek apakah NIM sudah terdaftar
+        $existing_pemilih = $this->Pemilih_model->get_pemilih_by_nim($nim);
+        if ($existing_pemilih) {
+            $this->session->set_flashdata('error', 'NIM sudah terdaftar! Silakan gunakan NIM lain.');
             redirect('auth_pemilih/register');
-        } catch (Exception $e) {
-            $this->session->set_flashdata('error', 'Terjadi kesalahan sistem. Silakan coba lagi.');
+            return;
+        }
+
+        // Siapkan data untuk database
+        $data = array(
+            'nim' => $nim,
+            'nama' => $nama,
+            'password' => password_hash($password, PASSWORD_DEFAULT),
+            'status_memilih' => 0,
+            'created_at' => date('Y-m-d H:i:s')
+        );
+
+        // Insert ke database
+        if ($this->Pemilih_model->insert_pemilih($data)) {
+            $this->session->set_flashdata('success', 'Registrasi berhasil! Silakan login dengan akun Anda.');
+            redirect('auth_pemilih/login');
+        } else {
+            $this->session->set_flashdata('error', 'Registrasi gagal. Silakan coba lagi.');
             redirect('auth_pemilih/register');
         }
     }

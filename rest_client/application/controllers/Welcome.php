@@ -11,14 +11,17 @@ class Welcome extends CI_Controller {
 
 	public function index()
 	{
-		// Cek apakah ada session aktif, jika ada redirect ke dashboard masing-masing
-		if ($this->session->userdata('status') === 'login') {
-			redirect('dashboard/dashboard');
-		} elseif ($this->session->userdata('pemilih_status') === 'login') {
-			redirect('dashboard_pemilih');
+		// Cek apakah sudah login admin
+		if ($this->session->userdata('status') === 'login' && $this->session->userdata('is_admin') === TRUE) {
+			redirect('admin/dashboard');
 		}
 		
-		// Tampilkan halaman pilihan login
-		$this->load->view('welcome_message');
+		// Cek apakah sudah login pemilih
+		if ($this->session->userdata('pemilih_status') === 'login') {
+			redirect('dashboard_pemilih/dashboard');
+		}
+		
+		// Tampilkan halaman pilihan role
+		$this->load->view('portal_login');
 	}
 }

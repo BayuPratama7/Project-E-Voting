@@ -1,283 +1,166 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <title>Login Admin - Sistem E-Voting</title>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Admin - E-Voting HIMSI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            height: 100vh; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            position: relative;
+        body {
+            background: linear-gradient(-45deg, #667eea, #764ba2, #6366f1, #8b5cf6);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .floating-home-btn {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 9999;
-            background: #FF0000;
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .login-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .logo-text {
             color: white;
-            padding: 15px 25px;
-            border-radius: 50px;
-            text-decoration: none;
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .form-control {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            color: white;
+            padding: 15px;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            color: white;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-login {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            padding: 15px;
             font-weight: bold;
             font-size: 16px;
-            border: 3px solid white;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
-            animation: bounce 2s infinite;
-            text-transform: uppercase;
-        }
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-10px); }
-            60% { transform: translateY(-5px); }
-        }
-        .floating-home-btn:hover {
-            background: white;
-            color: #FF0000;
-            text-decoration: none;
-            transform: scale(1.1);
-        }
-        .login-container { 
-            background: white; 
-            padding: 40px; 
-            border-radius: 15px; 
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1); 
-            width: 400px; 
-            max-width: 90%; 
-        }
-        .back-to-home {
-            text-align: center;
-            margin-bottom: 25px;
-            padding: 25px;
-            background: #FF0000;
-            border-radius: 20px;
-            border: 5px solid #FF0000;
-            animation: pulse 1.5s infinite;
-            box-shadow: 0 0 30px rgba(255, 0, 0, 0.6);
-        }
-        @keyframes pulse {
-            0% { 
-                box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7), 0 0 30px rgba(255, 0, 0, 0.6); 
-                transform: scale(1);
-            }
-            50% { 
-                box-shadow: 0 0 0 15px rgba(255, 0, 0, 0), 0 0 30px rgba(255, 0, 0, 0.6); 
-                transform: scale(1.05);
-            }
-            100% { 
-                box-shadow: 0 0 0 0 rgba(255, 0, 0, 0), 0 0 30px rgba(255, 0, 0, 0.6); 
-                transform: scale(1);
-            }
-        }
-        .back-to-home a {
-            display: block;
-            color: white;
-            text-decoration: none;
-            font-size: 24px;
-            font-weight: 900;
-            padding: 20px 25px;
-            border: 4px solid white;
-            border-radius: 30px;
-            background: #FF0000;
+            width: 100%;
+            cursor: pointer;
             transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
-        .back-to-home a:hover {
-            background: white;
-            color: #FF0000;
-            transform: scale(1.15);
-            text-decoration: none;
-            box-shadow: 0 0 20px rgba(255,255,255,0.8);
+        
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
         }
-        .login-header { 
-            text-align: center; 
-            margin-bottom: 30px; 
+        
+        .alert {
+            background: rgba(220, 53, 69, 0.2);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            border-radius: 10px;
+            color: white;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
         }
-        .login-header h1 { 
-            color: #333; 
-            margin-bottom: 10px; 
-            font-size: 28px; 
+        
+        .alert-success {
+            background: rgba(40, 167, 69, 0.2);
+            border: 1px solid rgba(40, 167, 69, 0.3);
         }
-        .login-header p { 
-            color: #666; 
-            font-size: 14px; 
+        
+        .login-info {
+            background: rgba(13, 110, 253, 0.2);
+            border: 1px solid rgba(13, 110, 253, 0.3);
+            border-radius: 10px;
+            color: white;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 14px;
         }
-        .form-group { 
-            margin-bottom: 20px; 
-        }
-        .form-group label { 
-            display: block; 
-            margin-bottom: 5px; 
-            color: #333; 
-            font-weight: bold; 
-        }
-        .form-group input { 
-            width: 100%; 
-            padding: 12px; 
-            border: 2px solid #ddd; 
-            border-radius: 8px; 
-            font-size: 16px; 
-            transition: border-color 0.3s; 
-        }
-        .form-group input:focus { 
-            outline: none; 
-            border-color: #667eea; 
-        }
-        .btn { 
-            width: 100%; 
-            padding: 12px; 
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%); 
-            color: white; 
-            border: none; 
-            border-radius: 8px; 
-            font-size: 16px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            transition: transform 0.2s; 
-        }
-        .btn:hover { 
-            transform: translateY(-2px); 
-        }
-        .alert { 
-            padding: 12px; 
-            margin-bottom: 20px; 
-            border-radius: 6px; 
-            text-align: center; 
-        }
-        .alert-error { 
-            background: #f8d7da; 
-            color: #721c24; 
-            border: 1px solid #f5c6cb; 
-        }
-        .alert-success { 
-            background: #d4edda; 
-            color: #155724; 
-            border: 1px solid #c3e6cb; 
-        }
-        .footer-note {
+        
+        .back-link {
             text-align: center;
             margin-top: 20px;
-            color: #666;
-            font-size: 12px;
         }
-        .admin-link {
-            text-align: center;
-            margin-top: 15px;
-        }
-        .admin-link a {
-            color: #667eea;
+        
+        .back-link a {
+            color: rgba(255, 255, 255, 0.8);
             text-decoration: none;
             font-size: 14px;
         }
-        .admin-link a:hover {
-            text-decoration: underline;
-        }
-        .default-info {
-            text-align: center;
-            margin-top: 15px;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 6px;
-            font-size: 13px;
-            color: #666;
-        }
-        .bottom-home-btn {
-            text-align: center;
-            margin-top: 20px;
-            padding: 15px;
-            background: #28a745;
-            border-radius: 15px;
-            border: 3px solid #28a745;
-        }
-        .bottom-home-btn a {
-            display: block;
+        
+        .back-link a:hover {
             color: white;
-            text-decoration: none;
-            font-size: 18px;
-            font-weight: bold;
-            padding: 12px 20px;
-            border: 2px solid white;
-            border-radius: 25px;
-            background: #28a745;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-        }
-        .bottom-home-btn a:hover {
-            background: white;
-            color: #28a745;
-            transform: scale(1.05);
-            text-decoration: none;
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <!-- FLOATING BUTTON KIRI ATAS -->
-    <a href="<?= site_url('/') ?>" class="floating-home-btn">
-        🏠 HALAMAN UTAMA
-    </a>
-
     <div class="login-container">
-        <div class="back-to-home">
-            <a href="<?= site_url('/') ?>">
-                🏠 KEMBALI KE HALAMAN UTAMA
-            </a>
+        <div class="logo-text">
+            <i class="fas fa-user-shield"></i> Login Admin
         </div>
         
-        <div class="login-header">
-            <h1>Login Admin</h1>
-            <p>Masukkan username dan password untuk mengakses panel admin</p>
-        </div>
-        
-        <?php if ($this->session->flashdata('error')): ?>
-            <div class="alert alert-error">
-                <?= $this->session->flashdata('error'); ?>
+        <?php if (isset($error) && $error): ?>
+            <div class="alert">
+                <i class="fas fa-exclamation-triangle"></i> <?= htmlspecialchars($error) ?>
             </div>
         <?php endif; ?>
         
-        <?php if ($this->session->flashdata('success')): ?>
+        <?php if (isset($success) && $success): ?>
             <div class="alert alert-success">
-                <?= $this->session->flashdata('success'); ?>
+                <i class="fas fa-check-circle"></i> <?= htmlspecialchars($success) ?>
             </div>
         <?php endif; ?>
         
-        <?= form_open('auth/aksi_login', array('method' => 'post')); ?>
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" name="username" id="username" placeholder="Masukkan Username Anda" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" name="password" id="password" placeholder="Masukkan Password Anda" required>
-            </div>
-            
-            <button type="submit" class="btn">Login</button>
-        <?= form_close(); ?>
+        <form method="post" action="<?php echo site_url('admin_auth/login_action'); ?>" class="login-form">
+            <input type="text" name="username" class="form-control" placeholder="Username Admin" required>
+            <input type="password" name="password" class="form-control" placeholder="Password Admin" required>
+            <button type="submit" class="btn-login">
+                <i class="fas fa-sign-in-alt"></i> LOGIN ADMIN
+            </button>
+        </form>
         
-        <div class="admin-link">
-            <a href="<?= site_url('auth_pemilih/login'); ?>">Login sebagai Pemilih</a>
+        <div class="login-info">
+            <strong>💡 Login Admin:</strong><br>
+            Username: <code>admin</code><br>
+            Password: <code>admin</code> / <code>1234</code> / <code>admin123</code>
         </div>
         
-        <div class="default-info">
-            <strong>Default:</strong> username = <strong>admin</strong>, password = <strong>1234</strong>
-        </div>
-        
-        <div class="bottom-home-btn">
+        <div class="back-link">
             <a href="<?= site_url('/') ?>">
-                🏠 KEMBALI KE HALAMAN UTAMA
+                <i class="fas fa-arrow-left"></i> Kembali ke Halaman Utama
             </a>
-        </div>
-        
-        <div class="footer-note">
-            Sistem E-Voting HIMSI
         </div>
     </div>
 </body>

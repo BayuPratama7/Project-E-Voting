@@ -145,7 +145,11 @@
         </div>
         
         <div class="admin-link">
-            <a href="<?= site_url('auth/login'); ?>">Login sebagai Admin</a>
+            <a href="<?= site_url('admin_auth/login'); ?>">Login sebagai Admin</a>
+        </div>
+        
+        <div class="admin-link">
+            <a href="<?= site_url('/'); ?>">← Kembali ke Halaman Utama</a>
         </div>
         
         <div class="footer-note">

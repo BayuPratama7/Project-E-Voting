@@ -3,7 +3,7 @@ $(document).ready(function() {
 
     // URL API di rest_server Anda untuk mengambil data kandidat
     // Ganti 'api/kandidat' dengan endpoint Anda yang sebenarnya
-    const apiUrl = 'http://localhost/y/rest_server/api/kandidat';
+    const apiUrl = 'https://votinghimsi.infinityfreeapp.com/rest_server/api/kandidat';
 
     // Menggunakan AJAX untuk mengambil data dari server
     $.ajax({

@@ -54,7 +54,17 @@
  *
  * NOTE: If you change these, also change the error_reporting() code below
  */
-	define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
+
+// Auto-detect environment based on domain
+if (isset($_SERVER['HTTP_HOST']) && 
+    (strpos($_SERVER['HTTP_HOST'], 'infinityfree') !== false || 
+     strpos($_SERVER['HTTP_HOST'], 'epizy.com') !== false ||
+     strpos($_SERVER['HTTP_HOST'], '.rf.gd') !== false ||
+     $_SERVER['HTTP_HOST'] === 'votinghimsi.infinityfreeapp.com')) {
+    define('ENVIRONMENT', 'production');
+} else {
+    define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
+}
 
 /*
  *---------------------------------------------------------------

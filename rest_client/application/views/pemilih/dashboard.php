@@ -612,8 +612,7 @@
                     url: '<?= site_url('dashboard_pemilih/pilih_calon'); ?>',
                     method: 'POST',
                     data: {
-                        id_calon: idCalon,
-                        '<?= $this->security->get_csrf_token_name(); ?>': '<?= $this->security->get_csrf_hash(); ?>'
+                        id_calon: idCalon
                     },
                     dataType: 'json',
                     success: function(response) {
@@ -627,7 +626,8 @@
                             event.target.disabled = false;
                         }
                     },
-                    error: function() {
+                    error: function(xhr, status, error) {
+                        console.log('AJAX Error:', xhr.responseText);
                         alert('Terjadi kesalahan sistem. Silakan coba lagi.');
                         // Reset button
                         event.target.innerHTML = '<i class="fas fa-vote-yea me-2"></i>Pilih Calon Ini';
